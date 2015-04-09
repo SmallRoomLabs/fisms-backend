@@ -1,0 +1,26 @@
+# Project specific files
+mongod.log
+
+# Editor backup files
+*.bak
+*~
+DEADJOE
+*sublime-workspace
+
+# Node modules folders
+node_modules/
+
+# OSX/Windows junk
+.DS_Store
+Thumbs.db
+
+# General OS stuff
+nohup.out
+*.tmp
+
+# kdiff3
+*.BACKUP.*
+*.BASE.*
+*.LOCAL.*
+*.REMOTE.*
+*.orig
