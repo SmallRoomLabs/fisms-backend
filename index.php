@@ -8,89 +8,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/skeleton.css">
+  <link rel="stylesheet" href="css/fisms.css">
   <link rel="icon" type="image/png" href="images/favicon.png">
 
-<style>
-
-.pageheader {
-  height:100px;
-  background-color: #ccc;
-  padding: 20px;
-  margin-bottom: 20px;
-  text-align: right;
-}
-
-
-.mybox {
-  border: 2px solid #666666;
-  background-color: #ccc;
-  margin-bottom: 5px;
-  -webkit-border-radius: 10px;
-  -ms-border-radius: 10px;
-  -moz-border-radius: 10px;
-  border-radius: 10px;
-  -webkit-box-shadow: inset 0 0 3px #000;
-  -ms-box-shadow: inset 0 0 3px #000;
-  box-shadow: inset 0 0 3px #000;
-}
-
-.mybox header {
-  color: #fff;
-  text-shadow: #000 0 1px;
-  text-align: center;
-  box-shadow: 5px;
-  padding: 5px;
-  background: -moz-linear-gradient(left center, rgb(0,0,0), rgb(79,79,79), rgb(21,21,21));
-  background: -webkit-gradient(
-    linear, left top, right top,
-    color-stop(0, rgb(0,0,0)),
-    color-stop(0.50, rgb(79,79,79)),
-    color-stop(1, rgb(21,21,21)));
-  background: -webkit-linear-gradient(left center, rgb(0,0,0), rgb(79,79,79), rgb(21,21,21));
-  background: -ms-linear-gradient(left center, rgb(0,0,0), rgb(79,79,79), rgb(21,21,21));
-  border-bottom: 1px solid #ddd;
-  -webkit-border-top-left-radius: 10px;
-  -moz-border-radius-topleft: 10px;
-  -ms-border-radius-topleft: 10px;
-  border-top-left-radius: 10px;
-  -webkit-border-top-right-radius: 10px;
-  -ms-border-top-right-radius: 10px;
-  -moz-border-radius-topright: 10px;
-  border-top-right-radius: 10px;
-}
-
-.mybox section {
-  padding-left:10px;
-  font-weight: bold;
-}
-
-.mybox article {
-  padding-left:10px;
-  font-style: italic;
-}
-
-.mybox hr {
-  margin: 10px 0 10px 0;
-  border: 0;
-  border-bottom: 1px dashed #ccc;
-  background: #999;
-}
-
-.expand {
-  float: right;
-  font-weight: bold;
-  cursor:zoom-in;
-}
-
-.notfirst {
-  display: none;
-}
-
-</style>
-
-
-
-<script src="/socket.io/socket.io.js"></script>
+  <!-- All requests to /socket.io are being handed off to a node.js-backend by nginx-->
+  <script src="/socket.io/socket.io.js"></script>
 
 
 <script>
@@ -103,8 +25,8 @@
     clearPrimaryAndSecondary(); // TODO remove after UI is finalized
     insertSystem('primarycol', '...', 'all-messages ...');
     socket = io.connect();
-    socket.on('system', handleSystemMessage);
-    socket.on('sms', handleSmsMessage);
+    socket.on('system', handleSystemMessage); 	// Adds a new system-box to the UI
+    socket.on('sms', handleSmsMessage);		// Adds a new SMS into a system-box
   }
 
   //
@@ -162,7 +84,8 @@
 
 
   //
-  //
+  // When this message is received from the node.js over the socket a new box
+  // should be displayed in the UI.
   //
   function handleSystemMessage(data) {
     insertSystem('secondarycol', data.country, data.phone)
@@ -170,7 +93,8 @@
 
 
   //
-  //
+  // When this message is received from the node.js over the socket a new SMS text
+  // should be displayed inside the designated system-box
   //
   function handleSmsMessage(data) {
       insertMessage(idFromPhone(data.phone), data.dt_sender, data.msg);
@@ -178,7 +102,8 @@
 
 
   //
-  //
+  // Convert a phone number string into something that can be used as a DOM id by
+  // just removing any non-numeric characters
   //
   function idFromPhone(phone) {
     var id=phone.replace(/\D/g,'');
@@ -293,7 +218,32 @@
   }
 </script>
 
+<?php
+  //
 
+function exceptions_error_handler($severity, $message, $filename, $lineno) {
+  if (error_reporting() == 0) {
+    return;
+  }
+  if (error_reporting() & $severity) {
+    throw new ErrorException($message, 0, $severity, $filename, $lineno);
+  }
+}
+
+  set_error_handler('exceptions_error_handler');
+  date_default_timezone_set('UTC');
+
+
+  try { 
+    $INIFILE='../private/config.ini';
+    $config=parse_ini_file($INIFILE);
+  } catch (Exception $e) {
+    die('Can\'t read the $INIFILE');
+  }
+  
+  
+          
+?>
 
 </head>
 <body>
