@@ -39,13 +39,18 @@ setInterval(function() {
   if (systems.length<1) return;
   if (Math.random()>0.1) return;
   var id=Math.floor((Math.random() * systems.length));
-  var sender=mysql.escape(senders[Math.floor((Math.random() * 250))]);
+  var sender=senders[Math.floor((Math.random() * 250))];
   if (Math.random()>0.2) {
     var cc=10+Math.floor(Math.random()*900);
     var num=100000000+Math.floor(Math.random()*900000000);
     sender='+'+cc.toString()+num.toString();
   }
-  var msg=mysql.escape(quotes[Math.floor((Math.random() * quotes.length))]);
-  var query="INSERT INTO msg (system_id, dt, sender, msg) VALUES("+id+",now(),'"+sender+"',"+msg+");"
+  var msg=quotes[Math.floor((Math.random() * quotes.length))];
+  var query="INSERT INTO msg (system_id, dt, sender, msg) VALUES("+id+",now(),"+mysql.escape(sender)+","+mysql.escape(msg)+");"
   console.log(query);
+  connection.query(query, function(err, rows){
+    if(err) { 
+      console.log("Insert error");    
+    } 
+  });
 },100);
