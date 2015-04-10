@@ -1,11 +1,14 @@
 var mysql     = require('mysql');
 var fs        = require('fs');
 var ini       = require('ini');
+
+
   
 var config = ini.parse(fs.readFileSync('../../private/config.ini', 'utf-8'))
 var systems=[
 ];
 
+// Might change random sentence to using this http://www.htmlgoodies.com/JSBook/sentence.html
 var quotes = fs.readFileSync('../doc/quotes.txt').toString().split("\n");
 console.log('Read '+quotes.length+' quotes from file');
 var senders = fs.readFileSync('../doc/senders.txt').toString().split("\n");
