@@ -1,13 +1,18 @@
-var  server   = require('http').createServer();
-var  io       = require('socket.io').listen(server);
+var server    = require('http').createServer();
+var io        = require('socket.io').listen(server);
 var mysql     = require('mysql');
-
+var fs        = require('fs');
+var ini       = require('ini');
+  
+var config = ini.parse(fs.readFileSync('../../private/config.ini', 'utf-8'))
+  
 var connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : ':-)',
-  database : 'fisms'
+  host     : config.db.server,
+  user     : config.db.user,
+  password : config.db.password,
+  database : config.db.database
 });
+
 
 connection.connect(function(err){
   if(!err) {
