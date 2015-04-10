@@ -48,6 +48,7 @@ var messages=[
   {phone:'461111111111', dt_sender:'def', msg:'apa?'},
   {phone:'461111111111', dt_sender:'ghi', msg:'Foobar'},
   {phone:'461111111111', dt_sender:'jkl', msg:'And Bletch!'},
+
 ]
 
 io.on('connection', function (socket) {
@@ -58,3 +59,21 @@ io.on('connection', function (socket) {
 //    socket.emit('sms', messages[i]);
   }
 });
+
+var maxId=1560;
+
+setInterval(function() {
+  var query="SELECT msg.id AS id, system.phone AS phone, CONCAT(msg.dt,' [',msg.sender,']') AS dt_sender, msg.msg AS msg FROM msg LEFT JOIN system ON system.id=msg.system_id WHERE msg.id>"+maxId+" ORDER BY msg.id;";
+  connection.query(query, function(err, rows){
+    if(!err) {
+      for (var i=0; i<rows.length; i++) {
+        io.sockets.emit('sms', rows[i]);
+        if (maxId<rows[i].id) {
+          maxId=rows[i].id;
+          console.log('maxId is now '+maxId);
+        }
+        console.log(rows[i]);
+      }
+    }
+  });
+},1000);
