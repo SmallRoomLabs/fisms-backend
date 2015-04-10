@@ -1,5 +1,21 @@
 var  server   = require('http').createServer();
 var  io       = require('socket.io').listen(server);
+var mysql     = require('mysql');
+
+var connection = mysql.createConnection({
+  host     : 'localhost',
+  user     : 'root',
+  password : ':-)',
+  database : 'fisms'
+});
+
+connection.connect(function(err){
+  if(!err) {
+    console.log("Database is connected");  
+  } else {
+    console.log("Error connecting database");  
+  }
+});
 
 server.listen(3000);
 console.log('Listing on port 3000');
@@ -7,8 +23,6 @@ console.log('Listing on port 3000');
 io.sockets.on('connection', function(socket) {
   console.log('Conection on port 3000');
 });
-
-
 
 
 
