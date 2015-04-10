@@ -5,21 +5,32 @@ var fs        = require('fs');
 var ini       = require('ini');
   
 var config = ini.parse(fs.readFileSync('../../private/config.ini', 'utf-8'))
+var systems=[
+  {country:'DATABASE', phone:'ERROR'},
+];
+
   
 var connection = mysql.createConnection({
   host     : config.db.server,
   user     : config.db.user,
-  password : config.db.password,
+  password : config.db.pw,
   database : config.db.database
 });
 
 
 connection.connect(function(err){
-  if(!err) {
-    console.log("Database is connected");  
-  } else {
+  if(err) {
     console.log("Error connecting database");  
+    return;
   }
+  console.log('Connected to database');
+  connection.query("SELECT country,phone FROM system ORDER by country,phone;", function(err, rows){
+    console.log('Sent query for systems to database');
+    if(!err) { 
+      console.log(rows);
+      systems=rows;
+    } 
+  });
 });
 
 server.listen(3000);
@@ -30,13 +41,6 @@ io.sockets.on('connection', function(socket) {
 });
 
 
-
-var systems=[
-  {country:'.se', phone:'+461111111111'},
-  {country:'.se', phone:'+462222222222'},
-  {country:'.se', phone:'+463333333333'},
-  {country:'.se', phone:'+464444444444'},
-];
 
 
 var messages=[
@@ -51,6 +55,6 @@ io.on('connection', function (socket) {
     socket.emit('system', systems[i]);
   }
   for (var i=0; i<messages.length; i++) {
-    socket.emit('sms', messages[i]);
+//    socket.emit('sms', messages[i]);
   }
 });
