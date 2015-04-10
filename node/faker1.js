@@ -2,11 +2,13 @@ var mysql     = require('mysql');
 var fs        = require('fs');
 var ini       = require('ini');
 
-
+function randomIntFromInterval(min, max) {
+    return Math.floor(Math.random()*(max-min+1)+min);
+}
+    
   
 var config = ini.parse(fs.readFileSync('../../private/config.ini', 'utf-8'))
-var systems=[
-];
+var systems=[];
 
 // Might change random sentence to using this http://www.htmlgoodies.com/JSBook/sentence.html
 var quotes = fs.readFileSync('../doc/quotes.txt').toString().split("\n");
@@ -40,15 +42,15 @@ connection.connect(function(err){
 
 setInterval(function() {
   if (systems.length<1) return;
-  if (Math.random()>0.1) return;
-  var id=Math.floor((Math.random() * systems.length));
-  var sender=senders[Math.floor((Math.random() * 250))];
-  if (Math.random()>0.2) {
-    var cc=10+Math.floor(Math.random()*900);
-    var num=100000000+Math.floor(Math.random()*900000000);
+  if (randomIntFromInterval(1,100)>10) return;
+  var id=randomIntFromInterval(1, systems.length);
+  var sender=senders[randomIntFromInterval(0,250)];
+  if (randomIntFromInterval(1,100)>20) {
+    var cc=randomIntFromInterval(10,900);
+    var num=randomIntFromInterval(100000000,999999999);
     sender='+'+cc.toString()+num.toString();
   }
-  var msg=quotes[Math.floor((Math.random() * quotes.length))];
+  var msg=quotes[randomIntFromInterval(0,quotes.length-1)];
   var query="INSERT INTO msg (system_id, dt, sender, msg) VALUES("+id+",now(),"+mysql.escape(sender)+","+mysql.escape(msg)+");"
   console.log(query);
   connection.query(query, function(err, rows){
